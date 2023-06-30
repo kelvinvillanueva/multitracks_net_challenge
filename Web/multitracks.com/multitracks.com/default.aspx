@@ -76,6 +76,9 @@
          <div class="wrapper mod-standard remodal-bg">
             <div class="text-hero mod-headphones ly-delta">
                <h1 class="text-hero--title">DotNET Assessment</h1>
+                <a class="btn btn-primary" href="PageToSync/artists-details.html">
+                   Go to Artists Details Page
+                </a>
             </div>
             <main class="standard--container u-container">
                <div class="u-row mod-between-md">
