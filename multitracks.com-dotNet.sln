@@ -1,7 +1,6 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.31515.178
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33712.159
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MTDataAccess", "Core\MTDataAccess\MTDataAccess.csproj", "{564E4868-9DC3-4750-A05A-337A0EC7D421}"
 EndProject
@@ -36,6 +35,8 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "MultiTracksDB", "DB\MultiTr
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DB", "DB", "{81332685-9D05-4270-94E1-6B766A2E7A93}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiTracksAPI", "MultiTracksAPI\MultiTracksAPI.csproj", "{301DC57C-4079-45FC-9189-C2BC91C2522A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -56,6 +57,10 @@ Global
 		{C0455F77-4C86-44AB-A96F-FD433BA1C3BB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0455F77-4C86-44AB-A96F-FD433BA1C3BB}.Release|Any CPU.Build.0 = Release|Any CPU
 		{C0455F77-4C86-44AB-A96F-FD433BA1C3BB}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{301DC57C-4079-45FC-9189-C2BC91C2522A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{301DC57C-4079-45FC-9189-C2BC91C2522A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{301DC57C-4079-45FC-9189-C2BC91C2522A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{301DC57C-4079-45FC-9189-C2BC91C2522A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +69,7 @@ Global
 		{564E4868-9DC3-4750-A05A-337A0EC7D421} = {5E4111CC-7F88-4DF2-8242-303BB8C79917}
 		{87ED2C8E-902B-4400-A71A-41BFF7B98F13} = {D81E2F48-0605-463B-96D5-D5F727D15298}
 		{C0455F77-4C86-44AB-A96F-FD433BA1C3BB} = {81332685-9D05-4270-94E1-6B766A2E7A93}
+		{301DC57C-4079-45FC-9189-C2BC91C2522A} = {D81E2F48-0605-463B-96D5-D5F727D15298}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {6C3BA3E6-6743-4DE0-845C-465A67D21BF0}

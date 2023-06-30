@@ -8,8 +8,7 @@ public partial class Default : MultitracksPage
         var sql = new SQL();
 
         try
-        {
-            //sql.Parameters.Add("@stepID", 1);
+        { 
             var data = sql.ExecuteStoredProcedureDT("GetAssessmentSteps");
 
             assessmentItems.DataSource = data;
