@@ -20,9 +20,14 @@ public partial class PageToSync_artistDetails : System.Web.UI.Page
 
                 lblArtistName.Text = artistName;
                 txtBiography.Text = biography;
+                imgArtistBanner.ImageUrl = artistData.Rows[0]["BannerImage"].ToString();
+                imgArtistBanner.AlternateText = artistName;
+                imgArtist.ImageUrl = artistData.Rows[0]["ArtistImage"].ToString();
+                imgArtist.AlternateText = artistName; 
             }
             var sql2 = new SQL();
             sql2.Parameters.Add("@artistId", artistId);
+            sql2.Parameters.Add("@quantity", 2);
             DataTable songsData = sql2.ExecuteStoredProcedureDT("GetArtistSongs");
             if (songsData.Rows.Count > 0)
             {
@@ -32,6 +37,8 @@ public partial class PageToSync_artistDetails : System.Web.UI.Page
 
             var sql3 = new SQL();
             sql3.Parameters.Add("@artistId", artistId);
+            sql3.Parameters.Add("@quantity", 12);
+
             DataTable albumsData = sql3.ExecuteStoredProcedureDT("GetArtistAlbums");
             if (albumsData.Rows.Count > 0)
             {

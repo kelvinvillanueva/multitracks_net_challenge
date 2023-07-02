@@ -1,4 +1,4 @@
-﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="artistDetails.aspx.cs" Inherits="PageToSync_artistDetails" %>
+﻿<%@ Page Language="C#" AutoEventWireup="true" CodeFile="songsIndex.aspx.cs" Inherits="PageToSync_songsIndex" %>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,6 +66,13 @@
 				<div class="details-banner">
 					<div class="details-banner--overlay"></div>
 					<div class="details-banner--hero">
+						<img class="details-banner--hero--img" src="./img/31.jpg" 
+						srcset="./img/31.jpg, 
+						./img/31.jpg 2x" alt="Bethel Music">
+					</div>
+					<div class="details-banner">
+					<div class="details-banner--overlay"></div>
+					<div class="details-banner--hero">
 						  <asp:Image ID="imgArtistBanner" runat="server" 
 							  CssClass="details-banner--hero--img" />
 					</div>
@@ -81,20 +88,18 @@
 					</div>
 				</div>
 
+				</div>
+
 				<nav class="discovery--nav">
 					<ul class="discovery--nav--list tab-filter--list u-no-scrollbar">
-						<li class="discovery--nav--list--item tab-filter--item is-active">
+						<li class="discovery--nav--list--item tab-filter--item ">
 							<a class="tab-filter" href='artistDetails.aspx?artistId=<%= Request.QueryString["artistId"] %> '>Overview</a>
 						</li>
-						<li class="discovery--nav--list--item tab-filter--item">
-							<a class="tab-filter" 
-							href='songsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '
-								>Songs</a>
+						<li class="discovery--nav--list--item tab-filter--item is-active">
+							<a class="tab-filter" href='songsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '>Songs</a>
 						</li>
 						<li class="discovery--nav--list--item tab-filter--item">
-							<a class="tab-filter" 
-								href='albumsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '
-								>Albums</a>
+							<a class="tab-filter" href='albumsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '>Albums</a>
 						</li>
 					</ul> <!-- /.browse-header-filters -->
 				</nav>
@@ -104,10 +109,8 @@
 
 								<section class="standard--holder">
 									<div class="discovery--section--header">
-										<h2>Top Songs</h2>
-										<a class="discovery--section--header--view-all" 
-											href='songsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '
-											>View All</a>
+										<h2>All Songs</h2>
+									 
 									</div><!-- /.discovery-select -->
 
 									<ul id="playlist" class="song-list mod-new mod-menu">
@@ -155,56 +158,11 @@
 										
 									 							</ul><!-- /.song-list -->
 								</section><!-- /.songs-section -->
-
-								<div class="discovery--space-saver">
-									<section class="standard--holder">
-										<div class="discovery--section--header">
-											<h2>Albums</h2>
-											<a class="discovery--section--header--view-all" href='albumsIndex.aspx?artistId=<%= Request.QueryString["artistId"] %> '>View All</a>
-										</div><!-- /.discovery-select -->
-
-										<div class="discovery--grid-holder">
-
-											<div class="ly-grid ly-grid-cranberries">
-
-												 <asp:Repeater ID="rptAlbums" runat="server">
-        <ItemTemplate>
-            <div class="media-item">
-                <a class="media-item--img--link" href="#" tabindex="0">
-                    <img class="media-item--img" alt="Reckless Love" src='<%# Eval("AlbumImage") %>' srcset='<%# Eval("AlbumImage") %>, <%# Eval("AlbumImage") %> 2x'>
-                    <span class="image-tag">Master</span>
-                </a>
-                <a class="media-item--title" href="#" tabindex="0"><%# Eval("AlbumName") %></a>
-                <a class="media-item--subtitle" href="#" tabindex="0"><%# Eval("Year") %></a>
-            </div>
-        </ItemTemplate>
-    </asp:Repeater>
-										 
-											</div><!-- /.grid -->
-										</div><!-- /.discovery-grid-holder -->
-									</section><!-- /.songs-section -->
-								</div>
-
-								<section class="standard--holder">
-									<div class="discovery--section--header">
-										<h2>Biography</h2>
-									</div><!-- /.discovery-section-header -->
-
-									<div class="artist-details--biography biography">
-										<p>
-										<asp:Literal ID="txtBiography" runat="server"></asp:Literal>
-										</p>
-										 	<p></p>
-										 
-									</div>
-								</section><!-- /.biography-section -->
-							</main><!-- /.discovery-section -->
+ 
+ 		</main><!-- /.discovery-section -->
 				</div><!-- /.standard-container -->
 			</div><!-- /.wrapper -->
-            <%-- <!--#include virtual = "../includes/footer.aspx" -->
-			 --%>
-			
-
+            
 			<a class="accessibility" href="#wrapper" tabindex="20">Back to top</a>
 		</form>
 	</body>
