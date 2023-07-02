@@ -42,7 +42,7 @@
          <header class="header mod-interior remodal-bg">
             <div class="header--holder">
                <div class="header--mobile js-media-search-mobile-container">
-                  <a class="header--mobile--logo" href="/resources">
+                  <a class="header--mobile--logo" href="/default.aspx">
                      <img src="//mtracks.azureedge.net/public/images/site/logo/en/logo-mono.svg" id="header_logo" class="header--mobile--logo--img mod-full" alt="MultiTracks.com">
                      <svg class="header--mobile--logo--img mod-mark">
                         <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="/images/sprite.symbol.svg#mt-death-star"></use>
@@ -61,7 +61,7 @@
                   </div>
                </div>
                <div class="header--left">
-                  <a class="header--left--logo" href="/resources"><img src="//mtracks.azureedge.net/public/images/site/logo/en/logo-mono.svg" id="header_logoFull" class="header--left--logo--img mod-full" alt="MultiTracks.com"></a>
+                  <a class="header--left--logo" href="/default.aspx"><img src="//mtracks.azureedge.net/public/images/site/logo/en/logo-mono.svg" id="header_logoFull" class="header--left--logo--img mod-full" alt="MultiTracks.com"></a>
                   <div class="header--mobile mod-right">
                      <a class="header--mobile--link js-click-show-account" href="#">
                         <svg class="header--mobile--link--icon">
@@ -76,8 +76,8 @@
          <div class="wrapper mod-standard remodal-bg">
             <div class="text-hero mod-headphones ly-delta">
                <h1 class="text-hero--title">DotNET Assessment</h1>
-                <a class="btn btn-primary" href="PageToSync/artists-details.html">
-                   Go to Artists Details Page
+                <a class="btn btn-primary" href="PageToSync/artistsIndex.aspx">
+                   Go to Artists Page
                 </a>
             </div>
             <main class="standard--container u-container">

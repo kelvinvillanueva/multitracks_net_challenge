@@ -1,11 +1,6 @@
 ﻿using DataAccess;
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Web;
-using System.Web.UI;
-using System.Web.UI.WebControls;
 
 public partial class PageToSync_artistDetails : System.Web.UI.Page
 {
@@ -13,20 +8,36 @@ public partial class PageToSync_artistDetails : System.Web.UI.Page
     {
         if (!IsPostBack)
         {
-            int artistId = Convert.ToInt32(Request.QueryString["artistId"]);  
+            int artistId = Convert.ToInt32(Request.QueryString["artistId"]);
+            var sql = new SQL();
+            sql.Parameters.Add("@artistId", artistId);
 
-            var sql = new SQL();  
+            DataTable artistData = sql.ExecuteStoredProcedureDT("GetArtistDetails");
+            if (artistData.Rows.Count > 0)
+            {
+                var artistName = artistData.Rows[0]["ArtistName"].ToString();
+                var biography = artistData.Rows[0]["biography"].ToString();
 
-            sql.Parameters.Add("@artistId", 1);
+                lblArtistName.Text = artistName;
+                txtBiography.Text = biography;
+            }
+            var sql2 = new SQL();
+            sql2.Parameters.Add("@artistId", artistId);
+            DataTable songsData = sql2.ExecuteStoredProcedureDT("GetArtistSongs");
+            if (songsData.Rows.Count > 0)
+            {
+                rptSongs.DataSource = songsData;
+                rptSongs.DataBind();
+            }
 
-          DataTable data = sql.ExecuteStoredProcedureDT("GetArtistDetails");
-
-            var dd = data.Rows[0]["imageURL"].ToString();
-            var ddx = data.Rows[0]["title"].ToString();
-            // Bind the data to the controls in your page here, for example:
-            // imgArtistImage.ImageUrl = data.Rows[0]["ImageUrl"].ToString();
-            // lblArtistName.Text = data.Rows[0]["Name"].ToString();
-            // etc...
+            var sql3 = new SQL();
+            sql3.Parameters.Add("@artistId", artistId);
+            DataTable albumsData = sql3.ExecuteStoredProcedureDT("GetArtistAlbums");
+            if (albumsData.Rows.Count > 0)
+            {
+                rptAlbums.DataSource = albumsData;
+                rptAlbums.DataBind();
+            }
         }
     }
 }
