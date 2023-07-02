@@ -1,5 +1,6 @@
 ﻿using DataAccess;
 using Microsoft.AspNetCore.Mvc;
+using MultiTracksAPI.Dtos;
 using System.Data;
 using System.Dynamic;
 
@@ -36,6 +37,18 @@ namespace MultiTracksAPI.Controllers
             return Ok(list);
         }
 
-       
+        [HttpPost("create")]
+        public IActionResult CreateArtist([FromBody] ArtistDto artistDto)
+        {
+            sql.Parameters.Add("@title", artistDto.Title);
+            sql.Parameters.Add("@biography", artistDto.Biography);
+            sql.Parameters.Add("@imageURL", artistDto.ImageURL);
+            sql.Parameters.Add("@heroURL", artistDto.HeroURL);
+
+            sql.ExecuteStoredProcedure("CreateArtist");
+
+            return Ok("Artist created successfully.");
+        }
+
     }
 }
