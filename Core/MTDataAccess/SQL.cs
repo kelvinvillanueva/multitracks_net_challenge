@@ -6,393 +6,401 @@ using System.Data.SqlClient;
 
 namespace DataAccess
 {
-	public partial class SQL
-	{
-		private SqlConnection connection;
-		private SqlTransaction transaction;
-		private SqlCommand command;
+    public partial class SQL
+    {
+        private SqlConnection connection;
+        private SqlTransaction transaction;
+        private SqlCommand command;
 
-		public parameters Parameters = new parameters();
+        public parameters Parameters = new parameters();
 
-		private bool autoOpen = false;
+        private bool autoOpen = false;
 
-		public int Timeout = 30;
+        public int Timeout = 30;
 
-		private string connectionString = "";
+        private string connectionString = "";
 
-		public SQL(int timeout)
-			: this("admin")
-		{
-			Timeout = timeout;
-		}
 
-		public SQL()
-			: this("admin")
-		{
-		}
 
-		public SQL(string connectionStringName)
-		{
-			if (ConfigurationManager.ConnectionStrings[connectionStringName] == null)
-				throw new Exception("\"" + connectionStringName + "\" connection string not found in config file.");
-			else
-				connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ToString();
-		}
+        public SQL(int timeout)
+            : this("admin")
+        {
+            Timeout = timeout;
+        }
 
-		public SQL(string connectionStringName, int timeout)
-			: this(connectionStringName)
-		{
-			Timeout = timeout;
-		}
+        public SQL()
+            : this("admin")
+        {
+        }
 
-		public void OpenConnection()
-		{
-			connection = new SqlConnection(connectionString);
-			connection.Open();
-			command = connection.CreateCommand();
-		}
-		public void BeginTransaction()
-		{
-			if (!isConnnectionOpen())
-				throw new Exception("Connection is not open. Unable to Begin Transaction.");
+        public SQL(string connectionStringName, bool isFromApi = false)
+        {
+            if (isFromApi)
+                connectionString = connectionStringName;
+            else
+            {
+                if (ConfigurationManager.ConnectionStrings[connectionStringName] == null)
+                    throw new Exception("\"" + connectionStringName + "\" connection string not found in config file.");
+                else
+                    connectionString = ConfigurationManager.ConnectionStrings[connectionStringName].ToString();
 
-			transaction = connection.BeginTransaction();
-			command.Transaction = transaction;
-		}
+            }
+        }
 
-		public void Rollback()
-		{
-			transaction.Rollback();
+        public SQL(string connectionStringName, int timeout)
+            : this(connectionStringName)
+        {
+            Timeout = timeout;
+        }
 
-			transaction.Dispose();
-			command.Transaction = null;
-		}
+        public void OpenConnection()
+        {
+            connection = new SqlConnection(connectionString);
+            connection.Open();
+            command = connection.CreateCommand();
+        }
+        public void BeginTransaction()
+        {
+            if (!isConnnectionOpen())
+                throw new Exception("Connection is not open. Unable to Begin Transaction.");
 
-		public void Commit()
-		{
-			transaction.Commit();
+            transaction = connection.BeginTransaction();
+            command.Transaction = transaction;
+        }
 
-			transaction.Dispose();
-			command.Transaction = null;
-		}
+        public void Rollback()
+        {
+            transaction.Rollback();
 
-		private T InternalExecuteScalar<T>(string query, bool clearParameters, CommandType commandType)
-		{
-			prepare();
+            transaction.Dispose();
+            command.Transaction = null;
+        }
 
-			T ret;
+        public void Commit()
+        {
+            transaction.Commit();
 
-			command.CommandType = commandType;
-			command.CommandText = query;
-			command.CommandTimeout = Timeout;
+            transaction.Dispose();
+            command.Transaction = null;
+        }
 
-			addParameters();
+        private T InternalExecuteScalar<T>(string query, bool clearParameters, CommandType commandType)
+        {
+            prepare();
 
-			ret = (T)command.ExecuteScalar();
+            T ret;
 
-			if (clearParameters)
-				Parameters.Clear();
+            command.CommandType = commandType;
+            command.CommandText = query;
+            command.CommandTimeout = Timeout;
 
-			cleanUp();
+            addParameters();
 
-			return ret;
-		}
+            ret = (T)command.ExecuteScalar();
 
-		private int InternalExecute(string query, bool clearParameters, CommandType commandType)
-		{
-			prepare();
+            if (clearParameters)
+                Parameters.Clear();
 
-			int ret;
+            cleanUp();
 
-			command.CommandType = commandType;
-			command.CommandText = query;
-			command.CommandTimeout = Timeout;
+            return ret;
+        }
 
-			addParameters();
+        private int InternalExecute(string query, bool clearParameters, CommandType commandType)
+        {
+            prepare();
 
-			ret = command.ExecuteNonQuery();
+            int ret;
 
-			if (clearParameters)
-				Parameters.Clear();
+            command.CommandType = commandType;
+            command.CommandText = query;
+            command.CommandTimeout = Timeout;
 
-			cleanUp();
+            addParameters();
 
-			return ret;
-		}
+            ret = command.ExecuteNonQuery();
 
-		private DataTable InternalExecuteDT(string query, bool clearParameters, CommandType commandType)
-		{
-			prepare();
+            if (clearParameters)
+                Parameters.Clear();
 
-			command.CommandType = commandType;
-			command.CommandText = query;
-			command.CommandTimeout = Timeout;
+            cleanUp();
 
-			DataTable ret = new DataTable();
+            return ret;
+        }
 
-			addParameters();
+        private DataTable InternalExecuteDT(string query, bool clearParameters, CommandType commandType)
+        {
+            prepare();
 
-			ret.Load(command.ExecuteReader());
+            command.CommandType = commandType;
+            command.CommandText = query;
+            command.CommandTimeout = Timeout;
 
-			if (clearParameters)
-				Parameters.Clear();
+            DataTable ret = new DataTable();
 
-			cleanUp();
+            addParameters();
 
-			return ret;
-		}
+            ret.Load(command.ExecuteReader());
 
-		private DataSet InternalExecuteDS(string query, bool clearParameters, CommandType commandType)
-		{
-			prepare();
+            if (clearParameters)
+                Parameters.Clear();
 
-			command.CommandType = commandType;
-			command.CommandText = query;
-			command.CommandTimeout = Timeout;
+            cleanUp();
 
-			DataSet ret = new DataSet();
+            return ret;
+        }
 
-			SqlDataAdapter da = new SqlDataAdapter();
-			da.SelectCommand = command;
+        private DataSet InternalExecuteDS(string query, bool clearParameters, CommandType commandType)
+        {
+            prepare();
 
-			addParameters();
+            command.CommandType = commandType;
+            command.CommandText = query;
+            command.CommandTimeout = Timeout;
 
-			da.Fill(ret);
+            DataSet ret = new DataSet();
 
-			if (clearParameters)
-				Parameters.Clear();
+            SqlDataAdapter da = new SqlDataAdapter();
+            da.SelectCommand = command;
 
-			cleanUp();
+            addParameters();
 
-			return ret;
-		}
+            da.Fill(ret);
 
-		private SqlDataReader InternalExecuteDataReader(string query, bool clearParameters, CommandType commandType)
-		{
-			prepare();
+            if (clearParameters)
+                Parameters.Clear();
 
-			command.CommandType = commandType;
-			command.CommandText = query;
-			command.CommandTimeout = Timeout;
+            cleanUp();
 
-			addParameters();
+            return ret;
+        }
 
-			var reader = command.ExecuteReader();
+        private SqlDataReader InternalExecuteDataReader(string query, bool clearParameters, CommandType commandType)
+        {
+            prepare();
 
-			if (clearParameters)
-				Parameters.Clear();
+            command.CommandType = commandType;
+            command.CommandText = query;
+            command.CommandTimeout = Timeout;
 
-			return reader;
-		}
+            addParameters();
 
-		public int Execute(string query, bool clearParameters = false)
-		{
-			return InternalExecute(query, clearParameters, CommandType.Text);
-		}
+            var reader = command.ExecuteReader();
 
-		public int ExecuteStoredProcedure(string query, bool clearParameters = false)
-		{
-			return InternalExecute(query, clearParameters, CommandType.StoredProcedure);
-		}
+            if (clearParameters)
+                Parameters.Clear();
 
-		public DataTable ExecuteDT(string query, bool clearParameters = false)
-		{
-			return InternalExecuteDT(query, clearParameters, CommandType.Text);
-		}
+            return reader;
+        }
 
-		public DataTable ExecuteStoredProcedureDT(string query, bool clearParameters = false)
-		{
-			return InternalExecuteDT(query, clearParameters, CommandType.StoredProcedure);
-		}
+        public int Execute(string query, bool clearParameters = false)
+        {
+            return InternalExecute(query, clearParameters, CommandType.Text);
+        }
 
-		public DataSet ExecuteDS(string query, bool clearParameters = false)
-		{
-			return InternalExecuteDS(query, clearParameters, CommandType.Text);
-		}
+        public int ExecuteStoredProcedure(string query, bool clearParameters = false)
+        {
+            return InternalExecute(query, clearParameters, CommandType.StoredProcedure);
+        }
 
-		public DataSet ExecuteStoredProcedureDS(string query, bool clearParameters = false)
-		{
-			return InternalExecuteDS(query, clearParameters, CommandType.StoredProcedure);
-		}
+        public DataTable ExecuteDT(string query, bool clearParameters = false)
+        {
+            return InternalExecuteDT(query, clearParameters, CommandType.Text);
+        }
 
-		public SqlDataReader ExecuteStoredProcedureDataReader(string query, bool clearParameters = false)
-		{
-			return InternalExecuteDataReader(query, clearParameters, CommandType.StoredProcedure);
-		}
-
-
-		public T ExecuteStoredProcedureScalar<T>(string query, bool clearParameters = false)
-		{
-			return InternalExecuteScalar<T>(query, clearParameters, CommandType.StoredProcedure);
-		}
-
-		public T ExecuteScalar<T>(string query, bool clearParameters = false)
-		{
-			return InternalExecuteScalar<T>(query, clearParameters, CommandType.Text);
-		}
+        public DataTable ExecuteStoredProcedureDT(string query, bool clearParameters = false)
+        {
+            return InternalExecuteDT(query, clearParameters, CommandType.StoredProcedure);
+        }
 
-		private void prepare()
-		{
-			if (!isConnnectionOpen())
-			{
-				autoOpen = true;
-				OpenConnection();
-			}
-		}
-
-		private void cleanUp()
-		{
-			if (autoOpen)
-			{
-				CloseConnection();
-				autoOpen = false;
-			}
-		}
-
-		private void addParameters()
-		{
-			command.Parameters.Clear();
-
-			foreach (SqlParameter param in Parameters.List)
-			{
-				command.Parameters.Add(param);
-			}
-		}
-
-		public void CloseReader(SqlDataReader reader)
-		{
-			reader.Close();
-
-			command.Dispose();
-			command = null;
-
-			connection.Close();
-			connection.Dispose();
-			connection = null;
-		}
-		public void CloseConnection()
-		{
-			command.Dispose();
-			command = null;
-
-			connection.Close();
-			connection.Dispose();
-			connection = null;
-		}
-
-		private bool isConnnectionOpen()
-		{
-			return (connection != null && connection.State != ConnectionState.Closed);
-		}
-
-
-		public class parameters
-		{
-			public List<SqlParameter> List = new List<SqlParameter>();
-
-			public SqlParameter this[string parameterName]
-			{
-				get
-				{
-					foreach (SqlParameter param in List)
-					{
-						if (param.ParameterName == parameterName)
-							return param;
-					}
-					return null;
-				}
-			}
-
-			public SqlParameter this[int parameterIndex]
-			{
-				get
-				{
-					return List[parameterIndex];
-				}
-			}
-
-			public void Clear()
-			{
-				List.Clear();
-			}
-
-			public void Add(SqlParameter parameter)
-			{
-				List.Add(parameter);
-			}
-
-			public void Add(string parameterName, SqlDbType type, ParameterDirection direction)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Direction = direction;
-				List.Add(param);
-			}
-
-
-			public void Add(string parameterName, SqlDbType type, object value, byte precision, int size, ParameterDirection direction)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Value = value;
-				param.Precision = precision;
-				param.Size = size;
-				param.Direction = direction;
-				List.Add(param);
-			}
-
-			public void Add(string parameterName, SqlDbType type, object value, byte precision, int size)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Value = value;
-				param.Precision = precision;
-				param.Size = size;
-				List.Add(param);
-			}
-
-			public void Add(string parameterName, SqlDbType type, object value, byte precision)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Value = value;
-				param.Precision = precision;
-				List.Add(param);
-			}
-
-			public void Add(string parameterName, SqlDbType type, byte precision)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Precision = precision;
-				List.Add(param);
-			}
-
-
-			public void Add(string parameterName, SqlDbType type, object value)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				param.Value = value;
-				List.Add(param);
-			}
-
-			public void Add(string parameterName, object value)
-			{
-				SqlParameter param = new SqlParameter(parameterName, value);
-				List.Add(param);
-			}
-
-			public void Add(string parameterName, SqlDbType type)
-			{
-				SqlParameter param = new SqlParameter(parameterName, type);
-				param.SqlDbType = type;
-				List.Add(param);
-			}
-
-
-		}
-
-	}
+        public DataSet ExecuteDS(string query, bool clearParameters = false)
+        {
+            return InternalExecuteDS(query, clearParameters, CommandType.Text);
+        }
+
+        public DataSet ExecuteStoredProcedureDS(string query, bool clearParameters = false)
+        {
+            return InternalExecuteDS(query, clearParameters, CommandType.StoredProcedure);
+        }
+
+        public SqlDataReader ExecuteStoredProcedureDataReader(string query, bool clearParameters = false)
+        {
+            return InternalExecuteDataReader(query, clearParameters, CommandType.StoredProcedure);
+        }
+
+
+        public T ExecuteStoredProcedureScalar<T>(string query, bool clearParameters = false)
+        {
+            return InternalExecuteScalar<T>(query, clearParameters, CommandType.StoredProcedure);
+        }
+
+        public T ExecuteScalar<T>(string query, bool clearParameters = false)
+        {
+            return InternalExecuteScalar<T>(query, clearParameters, CommandType.Text);
+        }
+
+        private void prepare()
+        {
+            if (!isConnnectionOpen())
+            {
+                autoOpen = true;
+                OpenConnection();
+            }
+        }
+
+        private void cleanUp()
+        {
+            if (autoOpen)
+            {
+                CloseConnection();
+                autoOpen = false;
+            }
+        }
+
+        private void addParameters()
+        {
+            command.Parameters.Clear();
+
+            foreach (SqlParameter param in Parameters.List)
+            {
+                command.Parameters.Add(param);
+            }
+        }
+
+        public void CloseReader(SqlDataReader reader)
+        {
+            reader.Close();
+
+            command.Dispose();
+            command = null;
+
+            connection.Close();
+            connection.Dispose();
+            connection = null;
+        }
+        public void CloseConnection()
+        {
+            command.Dispose();
+            command = null;
+
+            connection.Close();
+            connection.Dispose();
+            connection = null;
+        }
+
+        private bool isConnnectionOpen()
+        {
+            return (connection != null && connection.State != ConnectionState.Closed);
+        }
+
+
+        public class parameters
+        {
+            public List<SqlParameter> List = new List<SqlParameter>();
+
+            public SqlParameter this[string parameterName]
+            {
+                get
+                {
+                    foreach (SqlParameter param in List)
+                    {
+                        if (param.ParameterName == parameterName)
+                            return param;
+                    }
+                    return null;
+                }
+            }
+
+            public SqlParameter this[int parameterIndex]
+            {
+                get
+                {
+                    return List[parameterIndex];
+                }
+            }
+
+            public void Clear()
+            {
+                List.Clear();
+            }
+
+            public void Add(SqlParameter parameter)
+            {
+                List.Add(parameter);
+            }
+
+            public void Add(string parameterName, SqlDbType type, ParameterDirection direction)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Direction = direction;
+                List.Add(param);
+            }
+
+
+            public void Add(string parameterName, SqlDbType type, object value, byte precision, int size, ParameterDirection direction)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Value = value;
+                param.Precision = precision;
+                param.Size = size;
+                param.Direction = direction;
+                List.Add(param);
+            }
+
+            public void Add(string parameterName, SqlDbType type, object value, byte precision, int size)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Value = value;
+                param.Precision = precision;
+                param.Size = size;
+                List.Add(param);
+            }
+
+            public void Add(string parameterName, SqlDbType type, object value, byte precision)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Value = value;
+                param.Precision = precision;
+                List.Add(param);
+            }
+
+            public void Add(string parameterName, SqlDbType type, byte precision)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Precision = precision;
+                List.Add(param);
+            }
+
+
+            public void Add(string parameterName, SqlDbType type, object value)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                param.Value = value;
+                List.Add(param);
+            }
+
+            public void Add(string parameterName, object value)
+            {
+                SqlParameter param = new SqlParameter(parameterName, value);
+                List.Add(param);
+            }
+
+            public void Add(string parameterName, SqlDbType type)
+            {
+                SqlParameter param = new SqlParameter(parameterName, type);
+                param.SqlDbType = type;
+                List.Add(param);
+            }
+
+
+        }
+
+    }
 
 }
