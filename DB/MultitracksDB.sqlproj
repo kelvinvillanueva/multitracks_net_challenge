@@ -71,6 +71,11 @@
     <None Include="Data\dbo.Artist.Table.sql" />
     <Build Include="Tables\dbo.AssessmentSteps.sql" />
     <Build Include="Stored Procedures\GetAssessmentSteps.sql" />
+    <Build Include="Stored Procedures\GetArtistDetails.sql" />
+    <Build Include="Stored Procedures\GetArtistSongsWithPaging.sql" />
+    <Build Include="Stored Procedures\GetArtistAlbums.sql" />
+    <Build Include="Stored Procedures\GetArtistSongs.sql" />
+    <Build Include="Stored Procedures\CreateArtist.sql" />
   </ItemGroup>
   <ItemGroup>
     <RefactorLog Include="Assessment.refactorlog" />
